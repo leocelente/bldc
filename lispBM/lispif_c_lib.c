@@ -240,6 +240,16 @@ static bool get_gpio(VESC_PIN io, stm32_gpio_t **port, uint32_t *pin, bool *is_a
 		res = true;
 #endif
 		break;
+	case VESC_PIN_RS485RE:
+		*port = HW_RS485_RE_PORT; *pin = HW_RS485_RE_PIN;
+		res = true;
+		break;
+	case VESC_PIN_RS485DE:
+		*port = HW_RS485_DE_PORT; *pin = HW_RS485_DE_PIN;
+		res = true;
+		break;
+
+
 	}
 
 	return res;

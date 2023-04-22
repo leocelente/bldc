@@ -100,6 +100,9 @@ typedef struct {
 	lbm_uint pin_adc1;
 	lbm_uint pin_adc2;
 	lbm_uint pin_ppm;
+	// RS485 pins
+	lbm_uint pin_rs485re;
+	lbm_uint pin_rs485de;
 
 	// Settings
 	lbm_uint l_current_min;
@@ -280,6 +283,10 @@ static bool compare_symbol(lbm_uint sym, lbm_uint *comp) {
 			get_add_symbol("pin-adc2", comp);
 		} else if (comp == &syms_vesc.pin_ppm) {
 			get_add_symbol("pin-ppm", comp);
+		} else if (comp == &syms_vesc.pin_rs485de) {
+			get_add_symbol("pin-rs485de", comp);
+		} else if (comp == &syms_vesc.pin_rs485re) {
+			get_add_symbol("pin-rs485re", comp);
 		}
 
 		else if (comp == &syms_vesc.l_current_min) {
@@ -4260,6 +4267,12 @@ bool lispif_symbol_to_io(lbm_uint sym, stm32_gpio_t **port, uint32_t *pin) {
 		*port = HW_ICU_GPIO; *pin = HW_ICU_PIN;
 		return true;
 #endif
+	} else if (compare_symbol(sym, &syms_vesc.pin_rs485de)) {
+		*port = HW_RS485_DE_PORT; *pin = HW_RS485_DE_PIN;
+		return true;
+	} else if (compare_symbol(sym, &syms_vesc.pin_rs485re)) {
+		*port = HW_RS485_RE_PORT; *pin = HW_RS485_RE_PIN;
+		return true;
 	}
 
 	return false;

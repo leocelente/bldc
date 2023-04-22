@@ -223,6 +223,8 @@ typedef enum {
 	VESC_PIN_HALL5,
 	VESC_PIN_HALL6,
 	VESC_PIN_PPM,
+	VESC_PIN_RS485RE,
+	VESC_PIN_RS485DE
 } VESC_PIN;
 
 typedef enum {
