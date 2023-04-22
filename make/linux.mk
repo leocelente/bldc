@@ -11,7 +11,7 @@
 
 
 # Get Python version, separate major/minor/patch, then put into wordlist
-PYTHON_VERSION_=$(wordlist 2,4,$(subst ., ,$(shell python -V 2>&1)))
+PYTHON_VERSION_=$(wordlist 2,4,$(subst ., ,$(shell python3 -V 2>&1)))
 
 # Get major version from aforementioned list
 PYTHON_MAJOR_VERSION_=$(word 1,$(PYTHON_VERSION_))
