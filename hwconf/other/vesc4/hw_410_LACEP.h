@@ -69,7 +69,7 @@ TEMP_MOTOR that is set to the rank 4 would not be measured
  amplifiers)
  *
  */
-// #define USE_HIGH_SIDE_CURRENT_MEASURE
+// #define USE_AMP_CURRENT_SENS
 
 // ADC Indexes
 #define ADC_IND_SENS1 2
@@ -90,7 +90,7 @@ TEMP_MOTOR that is set to the rank 4 would not be measured
 
 // Component parameters (can be overridden)
 #ifndef V_REG
-#define V_REG 3.45
+#define V_REG 3.4
 #endif
 #ifndef VIN_R1
 #define VIN_R1 39000.0
@@ -98,10 +98,11 @@ TEMP_MOTOR that is set to the rank 4 would not be measured
 #ifndef VIN_R2
 #define VIN_R2 2200.0
 #endif
-// Override gain and shunt resistance
-#define USE_HIGH_SIDE_CURRENT_MEASURE
 
-#ifdef USE_HIGH_SIDE_CURRENT_MEASURE
+// Override gain and shunt resistance
+// #define USE_AMP_CURRENT_SENS
+
+#ifdef USE_AMP_CURRENT_SENS
 
 // 10.6
 #define CURRENT_AMP_GAIN (1.0f + (49.4e3f / 5.1e3f)) 

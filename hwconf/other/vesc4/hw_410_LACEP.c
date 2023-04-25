@@ -100,7 +100,7 @@ void hw_init_gpio(void) {
   // as SENS palSetPadMode(GPIOA, 6, PAL_MODE_INPUT_ANALOG); // ADC_EXT2
   // rerouted as SENS
 
-#ifdef USE_HIGH_SIDE_CURRENT_MEASURE
+#ifdef USE_AMP_CURRENT_SENS
   palSetPadMode(GPIOA, 7, PAL_MODE_INPUT_ANALOG); // CURR2
   palSetPadMode(GPIOA, 6, PAL_MODE_INPUT_ANALOG); // CURR1
 #else
@@ -126,7 +126,7 @@ void hw_setup_adc_channels(void) {
   ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_15Cycles);
 
   // CURR2
-#ifdef USE_HIGH_SIDE_CURRENT_MEASURE
+#ifdef USE_AMP_CURRENT_SENS
   ADC_RegularChannelConfig(ADC1, ADC_Channel_7, 2, ADC_SampleTime_15Cycles);
 #else
   ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 2, ADC_SampleTime_15Cycles);
@@ -145,7 +145,7 @@ void hw_setup_adc_channels(void) {
   ADC_RegularChannelConfig(ADC2, ADC_Channel_1, 1, ADC_SampleTime_15Cycles);
 
   // CURR1
-#ifdef USE_HIGH_SIDE_CURRENT_MEASURE
+#ifdef USE_AMP_CURRENT_SENS
   ADC_RegularChannelConfig(ADC2, ADC_Channel_6, 2, ADC_SampleTime_15Cycles);
 #else
   ADC_RegularChannelConfig(ADC2, ADC_Channel_9, 2, ADC_SampleTime_15Cycles);
@@ -175,7 +175,7 @@ void hw_setup_adc_channels(void) {
    * hypothesis that they are each configured twice to couple them (sync them)
    * no matter which triggers the event
    */
-#ifdef USE_HIGH_SIDE_CURRENT_MEASURE
+#ifdef USE_AMP_CURRENT_SENS
   ADC_InjectedChannelConfig(ADC1, ADC_Channel_6, 1, ADC_SampleTime_15Cycles);
   ADC_InjectedChannelConfig(ADC1, ADC_Channel_7, 2, ADC_SampleTime_15Cycles);
   ADC_InjectedChannelConfig(ADC2, ADC_Channel_7, 1, ADC_SampleTime_15Cycles);
