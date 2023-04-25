@@ -21,3 +21,4 @@ package/
 *.zip
 compile_commands.json
 package/
+extracted/
