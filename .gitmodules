@@ -1,0 +1,3 @@
+[submodule "vesc-rs485-lispbm"]
+	path = vesc-rs485-lispbm
+	url = https://github.com/leocelente/vesc-rs485-lispbm.git
