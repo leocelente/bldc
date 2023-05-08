@@ -27,12 +27,15 @@
 
 #include "commands.h"
 #include "mc_interface.h"
+#include "pal.h"
+#include "stm32f407xx.h"
 #include "timeout.h"
 #include "servo_dec.h"
 #include "servo_simple.h"
 #include "encoder/encoder.h"
 #include "comm_can.h"
 #include "bms.h"
+#include "uart.h"
 #include "utils_math.h"
 #include "utils_sys.h"
 #include "hw.h"
@@ -43,6 +46,7 @@
 #include "spi_bb.h"
 #include "i2c.h"
 #include "confgenerator.h"
+#include "vesc4/hw_410_LACEP.h"
 #include "worker.h"
 #include "app.h"
 #include "canard_driver.h"
@@ -2288,6 +2292,58 @@ static lbm_value ext_uart_write(lbm_value *args, lbm_uint argn) {
 	return ENC_SYM_TRUE;
 }
 
+static lbm_value ext_rs485_write(lbm_value *args, lbm_uint argn) {
+	if (argn != 1 || (!lbm_is_cons(args[0]) && !lbm_is_array_r(args[0]))) {
+		return ENC_SYM_EERROR;
+	}
+
+	if (!uart_started) {
+		return ENC_SYM_EERROR;
+	}
+
+	const int max_len = 20;
+	uint8_t to_send[max_len];
+	uint8_t *to_send_ptr = to_send;
+	int ind = 0;
+
+	if (lbm_is_array_r(args[0])) {
+		lbm_array_header_t *array = (lbm_array_header_t *)lbm_car(args[0]);
+		to_send_ptr = (uint8_t*)array->data;
+		ind = array->size;
+	} else {
+		lbm_value curr = args[0];
+		while (lbm_is_cons(curr)) {
+			lbm_value  arg = lbm_car(curr);
+
+			if (lbm_is_number(arg)) {
+				to_send[ind++] = lbm_dec_as_u32(arg);
+			} else {
+				return ENC_SYM_EERROR;
+			}
+
+			if (ind == max_len) {
+				break;
+			}
+
+			curr = lbm_cdr(curr);
+		}
+	}
+	event_listener_t listener;
+	chEvtRegisterMaskWithFlags (chnGetEventSource (&HW_UART_DEV),
+                                           &listener, EVENT_MASK (0),
+                                           CHN_TRANSMISSION_END);
+	palWritePad(HW_RS485_RE_PORT, HW_RS485_RE_PIN, 1);
+	palWritePad(HW_RS485_DE_PORT, HW_RS485_DE_PIN, 1);
+	sdWrite(&HW_UART_DEV, to_send_ptr, ind);
+	chEvtWaitOne (EVENT_MASK (0));
+	// while (!(HW_UART_DEV.usart->SR & USART_SR_TC));
+	palWritePad(HW_RS485_DE_PORT, HW_RS485_DE_PIN, 0);
+	palWritePad(HW_RS485_RE_PORT, HW_RS485_RE_PIN, 0);
+
+	return ENC_SYM_TRUE;
+}
+
+
 static lbm_value ext_uart_read(lbm_value *args, lbm_uint argn) {
 	if ((argn != 2 && argn != 3 && argn != 4) ||
 			!lbm_is_array_r(args[0]) || !lbm_is_number(args[1])) {
@@ -4078,6 +4134,7 @@ void lispif_load_vesc_extensions(void) {
 	uart_started = false;
 	lbm_add_extension("uart-start", ext_uart_start);
 	lbm_add_extension("uart-write", ext_uart_write);
+	lbm_add_extension("rs485-write", ext_rs485_write);
 	lbm_add_extension("uart-read", ext_uart_read);
 
 	// I2C
